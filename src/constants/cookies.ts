@@ -1,0 +1,3 @@
+export const COOKIE = {
+    USER_TOKEN_COOKIE: 'USER_TOKEN_COOKIE'
+}
