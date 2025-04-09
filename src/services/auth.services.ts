@@ -1,5 +1,5 @@
 import { AuthRepository } from "../repository/auth.repository"
-import { IUserInfo } from "../types/auth.type";
+import { ILogin, IUserInfo } from "../types/auth.type";
 import createHttpError from "../utils/httperror.utils";
 import bycrypt from 'bcryptjs'
 
@@ -27,6 +27,26 @@ export class AuthServices{
             }
             
             const result = await this.authRepository.registerUser(userDetail)
+            return result
+        }catch(error){
+            throw error
+        }
+    }
+
+    async loginUser(userCredentials: ILogin){
+        try{
+            const {email, password} = userCredentials
+            const userExist = await this.authRepository.getUser(email)
+            if(!userExist){
+                throw createHttpError.NotFound("User with email doesn't exist.")
+            }
+
+            const isPasswordMatch = bycrypt.compare(userExist.password, password)
+            if(!isPasswordMatch){
+                throw createHttpError.BadRequest("Password doesn't match.")
+            }
+
+            const result = await this.authRepository.loginUser(email)
             return result
         }catch(error){
             throw error

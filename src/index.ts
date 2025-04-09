@@ -3,9 +3,11 @@ import 'dotenv/config'
 import apiRouter from './routes/index'
 import mongoose from 'mongoose'
 import errorHandler from './middlewares/errorhandler.middleware'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 app.use(express.json())
+app.use(cookieParser())
 app.use(urlencoded({extended: true}))
 
 app.use('/api', apiRouter)

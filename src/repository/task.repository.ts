@@ -1,19 +1,27 @@
 import Task from "../models/task.model";
+import { IUserInfo } from "../types/auth.type";
 import { ITask } from "../types/task.type";
 
 
 export class TaskRepository{
-    async getAllTask(){
+    async getAllTask(userId: string){
         try{
-            return await Task.find()
+            const query = {
+                'added_by': userId
+            }
+            return await Task.find(query).populate('added_by','fullname -_id')
         }catch(error){
             throw error
         }
     }
 
-    async getTaskById(id: string){
+    async getTaskById(taskId: string, userId: string){
         try{
-            return await Task.findById(id)
+            const query = {
+                "_id":taskId,
+                "added_by": userId
+            }    
+            return await Task.findOne(query).populate('added_by', 'fullname -_id')
         }catch(error){
             throw error
         }

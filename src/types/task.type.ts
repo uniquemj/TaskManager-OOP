@@ -6,5 +6,6 @@ export interface ITask{
     description?: string,
     status?: Status,
     created_at?:Date,
+    added_by?:string,
     due_date?:Date
 }

@@ -2,6 +2,7 @@ import Task from "../models/task.model";
 import { ITask } from "../types/task.type";
 import { TaskRepository } from "../repository/task.repository";
 import createHttpError from "../utils/httperror.utils";
+import { IUserInfo } from "../types/auth.type";
 
 class TaskService{
     private readonly taskRepository: TaskRepository
@@ -10,9 +11,9 @@ class TaskService{
         this.taskRepository = new TaskRepository()
     }
 
-    async getAllTasks(){
+    async getAllTasks(userId: string){
         try{
-            const result =  await this.taskRepository.getAllTask()
+            const result =  await this.taskRepository.getAllTask(userId)
             if(result.length == 0){
                 throw createHttpError.NotFound("Task list is empty.")
             }
@@ -21,9 +22,9 @@ class TaskService{
             throw error
         }
     }
-    async getTaskById(taskId: string){
+    async getTaskById(taskId: string, userId: string){
         try{
-            const result = await this.taskRepository.getTaskById(taskId)
+            const result = await this.taskRepository.getTaskById(taskId, userId)
             if(!result){
                 throw createHttpError.NotFound("Task with Id not found.")
             }
@@ -32,10 +33,11 @@ class TaskService{
             throw error
         }
     }
-    async createTask(task: ITask){
+    async createTask(task: ITask, userId: string){
         try{
 
             const taskInfo = {
+                added_by: userId,
                 title: task.title,
                 description: task.description ?? "",
                 status: task.status,
@@ -48,9 +50,9 @@ class TaskService{
         }
     }   
 
-    async updateTask(taskId: string, task: ITask){
+    async updateTask(taskId: string, userId: string,task: ITask){
         try{
-            const taskExist = await this.taskRepository.getTaskById(taskId)
+            const taskExist = await this.taskRepository.getTaskById(taskId, userId)
             if(!taskExist){
                 throw createHttpError.NotFound("Task with Id not found.")
             }
@@ -61,9 +63,9 @@ class TaskService{
         }
     }
 
-    async removeTask(taskId: string){
+    async removeTask(taskId: string, userId: string){
         try{
-            const taskExist = await this.taskRepository.getTaskById(taskId)
+            const taskExist = await this.taskRepository.getTaskById(taskId, userId)
             if(!taskExist){
                 throw createHttpError.NotFound("Task with id not found.")
             }
